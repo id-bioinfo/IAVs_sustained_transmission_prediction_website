@@ -227,8 +227,8 @@
                             .map((text) => {
                                 let temp = text.split(":");
                                 return {
-                                    "Sequence meta": temp[0],
-                                    Prediction: temp[1],
+                                    "Sequence name": temp[0],
+                                    "Prediction (sustained transmission: +1, sporadic infection: -1)": temp[1],
                                 };
                             });
                         let graphResultJson =
@@ -278,14 +278,22 @@
 </script>
 
 <svelte:head>
-    <title>Prediction of sustained transmission of influenza A viruses</title>
+    <title>Prediction for sustained transmission of influenza A viruses in mammals</title>
 	<html lang="en" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+          padding: 0px;
+        }
+      </style>
 </svelte:head>
 
 <div class="main">
-    <h1><center>Prediction for sustained transmission of influenza A viruses in mammals by a combination of GC content and CG dinucleotide by Yongtao Ye</center></h1>
-    <h2>Sequence Type</h2>
+    <h1><center>Prediction for sustained transmission of influenza A viruses in mammals</center></h1>
+    <p>
+        Upload eight protein coding regions (HA, NA, NP, PA, PB1, PB2, M1 and NS1) or eight nucleotide segments (HA, NA, NP, PA, PB1, PB2, M and NS) to assess the risk of sustained transmission in a mammalian host for a set of avian or recently zoonotic influenza A viruses.
+    </p>
+    <h2>Choose sequence type:(Protein coding region or Neucleotide segments)</h2>
     <div class="row">
         <label class="runtypebutton">
             <input
@@ -306,7 +314,7 @@
             Whole genome segments
         </label>
     </div>
-    <h2>Fasta files upload</h2>
+    <h2>Select your FASTA sequences</h2>
     <label>
         HA:
         <input type="file" accept=".fasta" bind:files={HAfile} />
@@ -339,15 +347,23 @@
         {runtype == "CDS" ? "NS1" : "NS"}:
         <input type="file" accept=".fasta" bind:files={NSfile} />
     </label>
+    <p>
+        * Sequence names of the eight protein coding regions or nucleotide segments should be the same for each influenza A virus.
+    </p>
     <button on:click={handleSubmit}>Submit</button>
     {#await promise}
         <p>File is uploading and calculating results...</p>
     {:then res}
         {#if res}
-            <p>Success, here is the result:</p>
+            <h2>Success, here is the result:</h2>
             <Table tableData={res[0]} style="blueTable" />
-            The graph below illustrate the sequence in a 2D plane. Hover the mouse on top of the red dot to see its sequence meta
-            <Graph data={res[1]} />
+            <h2>2D projection by linear discriminant analysis</h2>
+            <div class="graphContainer">
+                <Graph data={res[1]} />
+                <img class="legend" src="./legends.PNG" alt="Graph legends"/>
+            </div>
+            <p>Positions of the tested IAVs (brown points) are shown on the distributions of avian and sporadic mammalian IAVs (gray zones), and persistent mammalian lineages (red zones). Hover your mouse on the points to see their sequence names. The earliest sequences in persistent mammalian lineages are also highlighted.
+            </p>
         {/if}
     {:catch error}
         <p>Error occured: {error.message}</p>
@@ -356,9 +372,9 @@
 
 <style>
     .main {
-        width: 100%;
-        padding-bottom: 32px;
-        overflow-y: scroll;
+        width: auto;
+        height: auto;
+        padding: 32px;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -373,5 +389,22 @@
     label.runtypebutton {
         padding-left: 16px;
         padding-right: 16px;
+    }
+
+    div.graphContainer {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+    }
+
+    img.legend {
+        width: 482px;
+        height: 280px;
+    }
+
+    p {
+        padding-left: 128px;
+        padding-right: 128px;
     }
 </style>

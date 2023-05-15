@@ -1,16 +1,5 @@
 <script>
-	export let tableData = [
-			{
-				vitae : "dolorem",
-				lectus : "ipsum",
-				quisquam : "quia"
-			},
-			{
-				vitae : "amet",
-				lectus : "consectetur",
-				quisquam : "adipisci"
-			}
-		];
+	export let tableData;
 	export let style;
 </script>
 

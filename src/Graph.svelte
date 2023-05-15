@@ -39,7 +39,7 @@
             cx={xScale(data.x)} 
             cy={yScale(data.y)} 
             r={6} 
-            fill="red" 
+            fill="#964B00" 
             title="{data?.name}"
             use:tooltip
         />
@@ -66,7 +66,7 @@
     }
 
     circle:hover {
-        transition: 1s;
+        transition: 0.5s;
         opacity: 1;
         z-index: 2;
     }
