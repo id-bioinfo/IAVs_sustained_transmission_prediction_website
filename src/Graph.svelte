@@ -28,7 +28,7 @@
 
 <svg {width} {height}>
     <image
-        href="./graph_bg.png"
+        href="./graph_bg.PNG"
         height={height - margin.bottom - margin.top}
         width={width - margin.left - margin.right}
         transform="translate({margin.left}, {margin.top})"
