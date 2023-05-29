@@ -1,8 +1,11 @@
 version: '2'
+volumes:
+  node_modules:
 services:
   web:
     build: .
     volumes: 
       - ./:/code
+      - node_modules:/code/node_modules
     ports:
       - "8080:8080"
