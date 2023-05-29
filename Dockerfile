@@ -8,6 +8,8 @@ RUN npm install
 
 COPY ./ /code
 
+EXPOSE 8080
+
 ENTRYPOINT [ "npm" ]
 
 CMD ["run", "dev"]

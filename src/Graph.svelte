@@ -51,12 +51,12 @@
         class="label"
         text-anchor="middle"
         x={width / 2}
-        y={height - 5}>LD2(0.02%)</text>
+        y={height - 5}>LD1</text>
     <text
         class="ylabel"
         text-anchor="middle"
         transform="translate(15, {height/2}) rotate(-90)"
-        >LD1(99.98%)</text>
+        >LD2</text>
 </svg>
 
 <style>

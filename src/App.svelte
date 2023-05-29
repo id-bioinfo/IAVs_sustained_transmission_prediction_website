@@ -195,9 +195,9 @@
 
 <div class="main">
   <h1>
-    <center
-      >Prediction for sustained transmission of influenza A viruses in mammals</center
-    >
+    <center>
+      Prediction for sustained transmission of influenza A viruses in mammals
+    </center>
   </h1>
   <p>
     Upload eight protein coding regions (HA, NA, NP, PA, PB1, PB2, M1 and NS1)
