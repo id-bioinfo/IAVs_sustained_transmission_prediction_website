@@ -7,7 +7,7 @@
   const maxFetch = 100 // max get result fetch until error
   const maxErrorFetch = 5 // max fetch for getting error
   const tableColNameSeq = "Sequence Name" 
-  const tableColNamePrediction = "Prediction (sustained transmission: +1, sporadic infection: -1)" 
+  const tableColNamePrediction = "Prediction" 
 
   let inputFiles = {
     HA: null,
@@ -194,18 +194,16 @@
 </svelte:head>
 
 <div class="main">
-  <h1>
-    <center>
-      Prediction for sustained transmission of influenza A viruses in mammals
-    </center>
-  </h1>
-  <p>
+  <h2>
+        Prediction for sustained transmission of influenza A viruses in mammals
+  </h2>
+  <h4>
     Upload eight protein coding regions (HA, NA, NP, PA, PB1, PB2, M1 and NS1)
     or eight nucleotide segments (HA, NA, NP, PA, PB1, PB2, M and NS) to assess
     the risk of sustained transmission in a mammalian host for a set of avian or
     recently zoonotic influenza A viruses.
-  </p>
-  <h2>Choose sequence type:(Protein coding region or Neucleotide segments)</h2>
+  </h4>
+  <h3>Choose sequence type:</h3>
   <div class="row">
     <label class="runtypebutton">
       <input type="radio" bind:group={runtype} name="runtype" value="CDS" />
@@ -213,10 +211,10 @@
     </label>
     <label>
       <input type="radio" bind:group={runtype} name="runtype" value="WGS" />
-      Whole genome segments
+      Neucleotide segment
     </label>
   </div>
-  <h2>Select your FASTA sequences</h2>
+  <h3>Select your FASTA sequences:</h3>
   {#each Object.entries(inputFiles) as [inputType, _]}
     <label>
       {inputType}{#if (inputType === "M" || inputType === "NS") && runtype === "CDS"}1{/if}:
@@ -224,20 +222,32 @@
     </label>
   {/each}
   <p>
+   <left>
     * Sequence names of the eight protein coding regions or nucleotide segments
-    should be the same for each influenza A virus.
+    should be the same for each influenza A virus and ordered accordingly in the input files.
+   </left>
   </p>
   {#if promise === null}
-    <button on:click={handleSubmit}>Run model</button>
-    <button on:click={handleRunDemo}>Run model with demo inputs(Mink H5)</button>
+   <div class="row">
+    <label class="runtypebutton">
+     	<button on:click={handleSubmit}>Run</button>
+    </label>
+    <label class="runtypebutton">
+     	<button on:click={handleRunDemo}>Run demo (Mink H5N1 IAVs)</button>
+    </label>
+   </div>
   {/if}
   {#await promise}
     <p>Loading...</p>
   {:then res}
     {#if res}
-      <h2>Success, here is the result:</h2>
+      <h3>SVM Prediction</h3>
       <Table tableData={res[0]} style="blueTable" />
-      <h2>2D projection by linear discriminant analysis</h2>
+      <p>
+        <b>1</b> is sustained transmission potential in mammalian hosts; <b>-1</b> is predicted to sporadic infection in mammals. 
+        The prediction is based on a combination of GC content and CG dinucleotide frequencies of eight CDS or segments using developed SVM model.
+      </p>
+      <h3>Visualization by 2D projection</h3>
       <div class="graphContainer">
         <Graph data={res[1]} />
         <img class="legend" src="./legends.PNG" alt="Graph legends" />
@@ -245,9 +255,9 @@
       <p>
         Positions of the tested IAVs (brown points) are shown on the
         distributions of avian and sporadic mammalian IAVs (gray zones), and
-        persistent mammalian lineages (red zones). Hover your mouse on the
-        points to see their sequence names. The earliest sequences in persistent
-        mammalian lineages are also highlighted.
+        persistent mammalian lineages (red zones), estimated by linear discriminant analysis. 
+        Hover your mouse on the points to see their sequence names. 
+        The earliest sequences in persistent mammalian lineages are also highlighted.
       </p>
       <!-- <button on:click|once={handleDeleteResult}>Delete result</button> -->
     {/if}
@@ -263,8 +273,8 @@
     padding: 32px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    align-items: left;
+    justify-content: left;
   }
 
   div.row {
@@ -290,8 +300,4 @@
     height: 260px;
   }
 
-  p {
-    padding-left: 128px;
-    padding-right: 128px;
-  }
 </style>
