@@ -34,4 +34,4 @@ You can run the newly built app with `npm run start`. This uses [sirv](https://g
 
 ## Created By
 Model: Yongtao Ye  
-Website: Isaac Wu, Jean and Yongtao Ye
+Website: Isaac Wu, Jean Zhao and Yongtao Ye
