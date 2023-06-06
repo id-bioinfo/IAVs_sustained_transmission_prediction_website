@@ -197,12 +197,19 @@
   <h2>
         Prediction for sustained transmission of influenza A viruses in mammals
   </h2>
-  <h4>
-    Upload eight protein coding regions (HA, NA, NP, PA, PB1, PB2, M1 and NS1)
-    or eight nucleotide segments (HA, NA, NP, PA, PB1, PB2, M and NS) to assess
-    the risk of sustained transmission in a mammalian host for a set of avian or
-    recently zoonotic influenza A viruses.
-  </h4>
+  <div class="graphContainer">
+    <img class="intro_photo" src="./intro.png" alt="Graph introduction" />
+    <div class="intro">
+      <p>
+      Upload eight protein coding regions (HA, NA, NP, PA, PB1, PB2, M1 and NS1)
+      or eight nucleotide segments (HA, NA, NP, PA, PB1, PB2, M and NS) to assess
+      the risk of sustained transmission in a mammalian host for a set of avian or
+      recently zoonotic influenza A viruses.
+      </p>
+    </div>
+  </div>
+
+  
   <h3>Choose sequence type:</h3>
   <div class="row">
     <label class="runtypebutton">
@@ -291,13 +298,25 @@
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
+    justify-content: left;
+    align-items: left;
   }
 
   img.legend {
-    width: 448px;
-    height: 260px;
+    width: 310px;
+    height: 315px;
   }
 
+  img.intro_photo{
+    float:left;
+    width:450px;
+    height:288px;
+    padding-left: 1px;
+    padding-right: 5px;
+  }
+  div.intro{
+    float:right;
+    width:400px;
+    padding-top: 80px;
+  }
 </style>
