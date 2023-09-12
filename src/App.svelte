@@ -214,7 +214,7 @@
   <div class="row">
     <label class="runtypebutton">
       <input type="radio" bind:group={runtype} name="runtype" value="CDS" />
-      Protein coding region
+      Protein coding region (recommended)
     </label>
     <label>
       <input type="radio" bind:group={runtype} name="runtype" value="WGS" />
