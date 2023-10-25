@@ -10,12 +10,12 @@
   const tableColNamePrediction = "Prediction" 
 
   let inputFiles = {
-    HA: null,
-    NA: null,
-    NP: null,
-    PA: null,
-    PB1: null,
     PB2: null,
+    PB1: null,
+    PA: null,
+    HA: null,
+    NP: null,
+    NA: null,
     M: null, // stores M or M1 based on runtype
     NS: null, // stores NS or NS1 based on runtype
   };
@@ -224,7 +224,7 @@
   <h3>Select your FASTA sequences:</h3>
   {#each Object.entries(inputFiles) as [inputType, _]}
     <label>
-      {inputType}{#if (inputType === "M" || inputType === "NS") && runtype === "CDS"}1{/if}:
+      {inputType === "M" ? runtype === "CDS" ? "M" : "MP" : inputType}{#if (inputType === "M" || inputType === "NS") && runtype === "CDS"}1{/if}:
       <input type="file" accept=".fasta" bind:files={inputFiles[inputType]} />
     </label>
   {/each}
