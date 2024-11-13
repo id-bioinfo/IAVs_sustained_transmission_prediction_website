@@ -202,7 +202,7 @@
     <div class="intro">
       <p>
       Upload eight protein coding regions (HA, NA, NP, PA, PB1, PB2, M1 and NS1)
-      or eight nucleotide segments (HA, NA, NP, PA, PB1, PB2, M and NS) to assess
+      or eight nucleotide segments (HA, NA, NP, PA, PB1, PB2, MP and NS) to assess
       the risk of sustained transmission in a mammalian host for a set of avian or
       recently zoonotic influenza A viruses.
       </p>
