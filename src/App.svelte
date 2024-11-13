@@ -3,11 +3,11 @@
   import Graph from "./Graph.svelte";
 
   // settings
-  const fetchInterval = 5 * 1000 // get result fetch interval in milliseconds
-  const maxFetch = 100 // max get result fetch until error
-  const maxErrorFetch = 5 // max fetch for getting error
-  const tableColNameSeq = "Sequence Name" 
-  const tableColNamePrediction = "Prediction" 
+  const fetchInterval = 5 * 1000; // get result fetch interval in milliseconds
+  const maxFetch = 100; // max get result fetch until error
+  const maxErrorFetch = 5; // max fetch for getting error
+  const tableColNameSeq = "Sequence Name";
+  const tableColNamePrediction = "Prediction";
 
   let inputFiles = {
     PB2: null,
@@ -76,20 +76,26 @@
           break;
         } else {
           retry++;
-          console.warn(`uploaded ${mInputType} file failed, retry count: ${retry}`);
-          console.warn(uploadRes?.body)
+          console.warn(
+            `uploaded ${mInputType} file failed, retry count: ${retry}`
+          );
+          console.warn(uploadRes?.body);
         }
       } while (retry <= 3);
       if (retry > 3) {
-        console.error(`Reached max retry during uploading ${inputFile}`)
+        console.error(`Reached max retry during uploading ${inputFile}`);
         throw new Error("Cannot upload files to server");
       }
     }
 
     if (successUpload == 8) {
-      const finishUploadResponse = await fetch(`https://duz5hhucocqrcvc4ub6ukcu26i0zrczv.lambda-url.us-east-1.on.aws/?jobid=${jobid}&runtype=${runtype}`);
+      const finishUploadResponse = await fetch(
+        `https://duz5hhucocqrcvc4ub6ukcu26i0zrczv.lambda-url.us-east-1.on.aws/?jobid=${jobid}&runtype=${runtype}`
+      );
       const finishUploadResponseJson = await finishUploadResponse.json();
-      checkResponse(finishUploadResponse, finishUploadResponseJson, ["success"])
+      checkResponse(finishUploadResponse, finishUploadResponseJson, [
+        "success",
+      ]);
 
       let fetchCount = 0;
       let errorFetchCount = 0;
@@ -100,32 +106,42 @@
         );
         const getResultResponseJson = await getResultResponse.json();
         try {
-          checkResponse(getResultResponse, getResultResponseJson, ["status", "graph_status"])
+          checkResponse(getResultResponse, getResultResponseJson, [
+            "status",
+            "graph_status",
+          ]);
         } catch (e) {
           if (errorFetchCount > maxErrorFetch) {
-            console.error(`ErrorFetchCount exceeds ${maxErrorFetch}, ${getResultResponseJson}`)
-            throw new Error("cannot connect to the server")
+            console.error(
+              `ErrorFetchCount exceeds ${maxErrorFetch}, ${getResultResponseJson}`
+            );
+            throw new Error("cannot connect to the server");
           }
           errorFetchCount++;
-          console.warn(`Cannot connect to the server, error fetch count: ${errorFetchCount}`);
+          console.warn(
+            `Cannot connect to the server, error fetch count: ${errorFetchCount}`
+          );
           continue;
         }
         if (
           getResultResponseJson["status"]["S"] === "finished" &&
-          getResultResponseJson["graph_status"]["S"] === "finished" && 
+          getResultResponseJson["graph_status"]["S"] === "finished" &&
           "result" in getResultResponseJson &&
           "graph_result" in getResultResponseJson
         ) {
           const resultText = getResultResponseJson["result"]["S"];
           let resultTextLines = resultText.split("\n");
-          let transformedResultText = []
-          for (let x = 0; x < resultTextLines.length; x+=2) {
-            transformedResultText = [...transformedResultText , {
-              [tableColNameSeq]: resultTextLines[x],
-              [tableColNamePrediction]: resultTextLines[x+1],
-            }]
+          let transformedResultText = [];
+          for (let x = 0; x < resultTextLines.length; x += 2) {
+            transformedResultText = [
+              ...transformedResultText,
+              {
+                [tableColNameSeq]: resultTextLines[x],
+                [tableColNamePrediction]: resultTextLines[x + 1],
+              },
+            ];
           }
-          console.log(transformedResultText)
+          console.log(transformedResultText);
           let graphResultJson = JSON.parse(
             getResultResponseJson["graph_result"]["S"]
           );
@@ -141,8 +157,8 @@
         } else {
           fetchCount++;
           if (fetchCount > maxFetch) {
-            console.error(`fetchCount exceeds maxFetch(${maxFetch})`)
-            throw new Error("Server Error")
+            console.error(`fetchCount exceeds maxFetch(${maxFetch})`);
+            throw new Error("Server Error");
           }
         }
       }
@@ -167,23 +183,25 @@
       let metadata = { type: "" };
       inputFiles[inputType] = [new File([data], filename, metadata)];
     }
-    handleSubmit()
-  }
+    handleSubmit();
+  };
 
   const handleSubmit = () => {
     for (const [_, inputFile] of Object.entries(inputFiles)) {
       if (inputFile?.length === 0) return;
     }
     promise = submit();
-  }
+  };
 
   const handleRunDemo = () => {
-    promise = loadDemoDataAndRun()
+    promise = loadDemoDataAndRun();
   };
 </script>
 
 <svelte:head>
-  <title>Prediction for sustained transmission of influenza A viruses in mammals</title>
+  <title
+    >Prediction for sustained transmission of influenza A viruses in mammals</title
+  >
   <html lang="en" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
@@ -195,21 +213,20 @@
 
 <div class="main">
   <h2>
-        Prediction for sustained transmission of influenza A viruses in mammals
+    Prediction for sustained transmission of influenza A viruses in mammals
   </h2>
   <div class="graphContainer">
     <img class="intro_photo" src="./intro.png" alt="Graph introduction" />
     <div class="intro">
       <p>
-      Upload eight protein coding regions (HA, NA, NP, PA, PB1, PB2, M1 and NS1)
-      or eight nucleotide segments (HA, NA, NP, PA, PB1, PB2, MP and NS) to assess
-      the risk of sustained transmission in a mammalian host for a set of avian or
-      recently zoonotic influenza A viruses.
+        Upload eight protein coding regions (HA, NA, NP, PA, PB1, PB2, M1 and
+        NS1) or eight nucleotide segments (HA, NA, NP, PA, PB1, PB2, MP and NS)
+        to assess the risk of sustained transmission in a mammalian host for a
+        set of avian or recently zoonotic influenza A viruses.
       </p>
     </div>
   </div>
 
-  
   <h3>Choose sequence type:</h3>
   <div class="row">
     <label class="runtypebutton">
@@ -224,25 +241,30 @@
   <h3>Select your FASTA sequences:</h3>
   {#each Object.entries(inputFiles) as [inputType, _]}
     <label>
-      {inputType === "M" ? runtype === "CDS" ? "M" : "MP" : inputType}{#if (inputType === "M" || inputType === "NS") && runtype === "CDS"}1{/if}:
+      {inputType === "M"
+        ? runtype === "CDS"
+          ? "M"
+          : "MP"
+        : inputType}{#if (inputType === "M" || inputType === "NS") && runtype === "CDS"}1{/if}:
       <input type="file" accept=".fasta" bind:files={inputFiles[inputType]} />
     </label>
   {/each}
   <p>
-   <left>
-    * Sequence names of the eight protein coding regions or nucleotide segments
-    should be the same for each influenza A virus and ordered accordingly in the input files.
-   </left>
+    <left>
+      * Sequence names of the eight protein coding regions or nucleotide
+      segments should be the same for each influenza A virus and ordered
+      accordingly in the input files.
+    </left>
   </p>
   {#if promise === null}
-   <div class="row">
-    <label class="runtypebutton">
-     	<button on:click={handleSubmit}>Run</button>
-    </label>
-    <label class="runtypebutton">
-     	<button on:click={handleRunDemo}>Run demo (Mink H5N1 IAVs)</button>
-    </label>
-   </div>
+    <div class="row">
+      <label class="runtypebutton">
+        <button on:click={handleSubmit}>Run</button>
+      </label>
+      <label class="runtypebutton">
+        <button on:click={handleRunDemo}>Run demo (Mink H5N1 IAVs)</button>
+      </label>
+    </div>
   {/if}
   {#await promise}
     <p>Loading...</p>
@@ -251,20 +273,23 @@
       <h3>SVM Prediction</h3>
       <Table tableData={res[0]} style="blueTable" />
       <p>
-        <b>1</b> is sustained transmission potential in mammalian hosts; <b>-1</b> is predicted to sporadic infection in mammals. 
-        The prediction is based on a combination of GC content and CG dinucleotide frequencies of eight CDS or segments using developed SVM model.
+        <b>1</b> is sustained transmission potential in mammalian hosts;
+        <b>-1</b> is predicted to sporadic infection in mammals. The prediction is
+        based on a combination of GC content and CG dinucleotide frequencies of eight
+        CDS or segments using developed SVM model.
       </p>
       <h3>Visualization by 2D projection</h3>
       <div class="graphContainer">
         <Graph data={res[1]} />
-        <img class="legend" src="./legends.PNG" alt="Graph legends" />
+        <img class="legend" src="./legends.jpeg" alt="Graph legends" />
       </div>
       <p>
         Positions of the tested IAVs (brown points) are shown on the
         distributions of avian and sporadic mammalian IAVs (gray zones), and
-        persistent mammalian lineages (red zones), estimated by linear discriminant analysis. 
-        Hover your mouse on the points to see their sequence names. 
-        The earliest sequences in persistent mammalian lineages are also highlighted.
+        persistent mammalian lineages (red zones), estimated by linear
+        discriminant analysis. Hover your mouse on the points to see their
+        sequence names. The earliest sequences in persistent mammalian lineages
+        are also highlighted.
       </p>
       <!-- <button on:click|once={handleDeleteResult}>Delete result</button> -->
     {/if}
@@ -296,6 +321,8 @@
 
   div.graphContainer {
     display: flex;
+    width: 100dwv;
+    flex: 1;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: left;
@@ -303,20 +330,20 @@
   }
 
   img.legend {
-    width: 310px;
-    height: 315px;
+    aspect-ratio: 926/631;
+    max-height: 447px;
   }
 
-  img.intro_photo{
-    float:left;
-    width:450px;
-    height:288px;
+  img.intro_photo {
+    float: left;
+    width: 450px;
+    height: 288px;
     padding-left: 1px;
     padding-right: 5px;
   }
-  div.intro{
-    float:right;
-    width:400px;
+  div.intro {
+    float: right;
+    width: 400px;
     padding-top: 80px;
   }
 </style>
