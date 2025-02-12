@@ -1,6 +1,6 @@
 # Website for IAVs sustained transmission prediction model
 
-Link: http://sustained-transmission-yt-web.s3-website-us-east-1.amazonaws.com/ 
+Link: https://iav-transmission.org/
 ## Get started
 
 Install the dependencies...
