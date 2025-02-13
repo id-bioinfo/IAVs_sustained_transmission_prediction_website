@@ -3,7 +3,7 @@
   import Graph from "./Graph.svelte";
 
   // settings
-  const fetchInterval = 5 * 1000; // get result fetch interval in milliseconds
+  const fetchInterval = 2 * 1000; // get result fetch interval in milliseconds
   const maxFetch = 100; // max get result fetch until error
   const maxErrorFetch = 5; // max fetch for getting error
   const tableColNameSeq = "Sequence Name";
@@ -43,7 +43,11 @@
 
   async function submit() {
     const getUploadURLResponse = await fetch(
-      `https://7dw7gs4iynbh5sygciwg5f4wky0vepdw.lambda-url.us-east-1.on.aws/?runtype=${runtype}`
+      `https://p67eisaxrntpxhtqjt2f4bhsou0fnmhm.lambda-url.us-east-1.on.aws/?runtype=${runtype}`,
+      {
+        method: "POST",
+        mode: "cors",
+      }
     );
     const getUploadURLResponseJson = await getUploadURLResponse.json();
     checkResponse(getUploadURLResponse, getUploadURLResponseJson, [
@@ -90,7 +94,11 @@
 
     if (successUpload == 8) {
       const finishUploadResponse = await fetch(
-        `https://duz5hhucocqrcvc4ub6ukcu26i0zrczv.lambda-url.us-east-1.on.aws/?jobid=${jobid}&runtype=${runtype}`
+        `https://wxgjeui7qfjttffrvrfcuuftsa0aflnb.lambda-url.us-east-1.on.aws/?jobid=${jobid}&runtype=${runtype}`,
+        {
+          method: "POST",
+          mode: "cors",
+        }
       );
       const finishUploadResponseJson = await finishUploadResponse.json();
       checkResponse(finishUploadResponse, finishUploadResponseJson, [
@@ -102,7 +110,7 @@
       while (true) {
         await new Promise((r) => setTimeout(r, fetchInterval));
         const getResultResponse = await fetch(
-          `https://3kksz4rczce67rboxnvpylwlxy0vuhtn.lambda-url.us-east-1.on.aws/?jobid=${jobid}`
+          `https://5nyo63rxfytss7xystvqnqasaq0looqo.lambda-url.us-east-1.on.aws/?jobid=${jobid}`
         );
         const getResultResponseJson = await getResultResponse.json();
         try {
@@ -222,8 +230,10 @@
         Upload eight protein coding regions (HA, NA, NP, PA, PB1, PB2, M1 and
         NS1) or eight nucleotide segments (HA, NA, NP, PA, PB1, PB2, MP and NS)
         to assess the risk of sustained transmission in a mammalian host for a
-        set of avian or recently zoonotic influenza A viruses.
-        Details in https://github.com/id-bioinfo/IAV_GCContent.
+        set of avian or recently zoonotic influenza A viruses. Details in
+        <a href="https://github.com/id-bioinfo/IAV_GCContent" target="_blank"
+          >https://github.com/id-bioinfo/IAV_GCContent</a
+        >.
       </p>
     </div>
   </div>
