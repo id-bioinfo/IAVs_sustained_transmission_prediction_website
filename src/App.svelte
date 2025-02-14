@@ -260,8 +260,7 @@
   <p>
     <left>
       * Sequence names of the eight protein coding regions or nucleotide
-      segments should be the same for each influenza A virus and ordered
-      accordingly in the input files.
+      segments should be the same for each influenza A virus in the input files.
     </left>
   </p>
   {#if promise === null}
