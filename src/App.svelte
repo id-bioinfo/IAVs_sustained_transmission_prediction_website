@@ -207,9 +207,7 @@
 </script>
 
 <svelte:head>
-  <title
-    >Prediction for sustained transmission of influenza A viruses in mammals</title
-  >
+  <title>Risk assessment of sustained mammalian transmission of influenza A viruses</title>
   <html lang="en" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
@@ -221,7 +219,7 @@
 
 <div class="main">
   <h2>
-    Prediction for sustained transmission of influenza A viruses in mammals
+    Risk assessment of sustained mammalian transmission of influenza A viruses
   </h2>
   <div class="graphContainer">
     <img class="intro_photo" src="./intro.png" alt="Graph introduction" />
@@ -229,8 +227,7 @@
       <p>
         Upload eight protein coding regions (HA, NA, NP, PA, PB1, PB2, M1 and
         NS1) or eight nucleotide segments (HA, NA, NP, PA, PB1, PB2, MP and NS)
-        to assess the risk of sustained transmission in a mammalian host for a
-        set of avian or recently zoonotic influenza A viruses. Details in
+        to assess the risk of sustained transmission in mammals for avian or recently zoonotic influenza A viruses. Details in
         <a href="https://github.com/id-bioinfo/IAV_GCContent" target="_blank"
           >https://github.com/id-bioinfo/IAV_GCContent</a
         >.
@@ -246,7 +243,7 @@
     </label>
     <label>
       <input type="radio" bind:group={runtype} name="runtype" value="WGS" />
-      Neucleotide segment
+      Nucleotide segment
     </label>
   </div>
   <h3>Select your FASTA sequences:</h3>
