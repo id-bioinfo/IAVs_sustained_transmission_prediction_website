@@ -19,18 +19,29 @@
     M: null, // stores M or M1 based on runtype
     NS: null, // stores NS or NS1 based on runtype
   };
+  let input = {
+    PB2: null,
+    PB1: null,
+    PA: null,
+    HA: null,
+    NP: null,
+    NA: null,
+    M: null, // stores M or M1 based on runtype
+    NS: null, // stores NS or NS1 based on runtype
+  };
   let runtype = "CDS"; // "CDS" or "WGS"
   let promise = null;
+  let isSubmitted = false;
 
   const checkResponse = (response, responseJson, expectedKeys) => {
     if (!response.ok) {
       console.error(`JSON return code not ok: ${response.status}`);
-      return new Error("Error: Cannot connect to the server.");
+      throw new Error("Error: Cannot connect to the server.");
     }
     if ("error" in responseJson) {
       console.error("error key appears in response JSON");
-      console.error(json.error);
-      throw new Error(`Error: Server error.`);
+      console.error(responseJson.error);
+      throw new Error(responseJson.error);
     }
     for (const key of expectedKeys) {
       if (key in responseJson === false) {
@@ -42,6 +53,7 @@
   };
 
   async function submit() {
+    isSubmitted = true;
     const getUploadURLResponse = await fetch(
       `https://p67eisaxrntpxhtqjt2f4bhsou0fnmhm.lambda-url.us-east-1.on.aws/?runtype=${runtype}`,
       {
@@ -94,7 +106,7 @@
 
     if (successUpload == 8) {
       const finishUploadResponse = await fetch(
-        `https://wxgjeui7qfjttffrvrfcuuftsa0aflnb.lambda-url.us-east-1.on.aws/?jobid=${jobid}&runtype=${runtype}`,
+        `https://6knl3dtwkvvngczchnvtubzkje0msjxf.lambda-url.us-east-1.on.aws/?jobid=${jobid}&runtype=${runtype}`,
         {
           method: "POST",
           mode: "cors",
@@ -204,10 +216,23 @@
   const handleRunDemo = () => {
     promise = loadDemoDataAndRun();
   };
+
+  const handleReset = () => {
+    promise = null;
+    isSubmitted = false;
+    for (const [inputType, _] of Object.entries(inputFiles)) {
+      inputFiles[inputType] = null;
+    }
+    for (const [inputType, inputFeild] of Object.entries(input)) {
+      inputFeild.value = "";
+    }
+  };
 </script>
 
 <svelte:head>
-  <title>Risk assessment of sustained mammalian transmission of influenza A viruses</title>
+  <title
+    >Risk assessment of sustained mammalian transmission of influenza A viruses</title
+  >
   <html lang="en" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
@@ -227,7 +252,8 @@
       <p>
         Upload eight protein coding regions (HA, NA, NP, PA, PB1, PB2, M1 and
         NS1) or eight nucleotide segments (HA, NA, NP, PA, PB1, PB2, MP and NS)
-        to assess the risk of sustained transmission in mammals for avian or recently zoonotic influenza A viruses. Details in
+        to assess the risk of sustained transmission in mammals for avian or
+        recently zoonotic influenza A viruses. Details in
         <a href="https://github.com/id-bioinfo/IAV_GCContent" target="_blank"
           >https://github.com/id-bioinfo/IAV_GCContent</a
         >.
@@ -254,7 +280,12 @@
           ? "M"
           : "MP"
         : inputType}{#if (inputType === "M" || inputType === "NS") && runtype === "CDS"}1{/if}:
-      <input type="file" accept=".fasta" bind:files={inputFiles[inputType]} />
+      <input
+        type="file"
+        bind:files={inputFiles[inputType]}
+        bind:this={input[inputType]}
+        disabled={isSubmitted}
+      />
     </label>
   {/each}
   <p>
@@ -277,6 +308,7 @@
     <p>Loading...</p>
   {:then res}
     {#if res}
+      <button on:click={handleReset}>Reset</button>
       <h3>SVM Prediction</h3>
       <Table tableData={res[0]} style="blueTable" />
       <p>
@@ -301,7 +333,8 @@
       <!-- <button on:click|once={handleDeleteResult}>Delete result</button> -->
     {/if}
   {:catch error}
-    <p>Error occured: {error.message}</p>
+    <button on:click={handleReset}>Reset</button>
+    <p style="white-space: pre-line">Error occured: {error}</p>
   {/await}
 </div>
 
