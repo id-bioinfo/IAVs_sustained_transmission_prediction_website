@@ -254,18 +254,21 @@
   <h2>
     Risk assessment of sustained mammalian transmission of influenza A viruses
   </h2>
-  <div class="graphContainer">
-    <img class="intro_photo" src="./intro.png" alt="Graph introduction" />
-    <div class="intro">
-      <p>
-        Upload eight protein coding regions (HA, NA, NP, PA, PB1, PB2, M1 and
-        NS1) or eight nucleotide segments (HA, NA, NP, PA, PB1, PB2, MP and NS)
-        to assess the risk of sustained transmission in mammals for avian or
-        recently zoonotic influenza A viruses. Details in
-        <a href="https://github.com/id-bioinfo/IAV_GCContent" target="_blank"
-          >https://github.com/id-bioinfo/IAV_GCContent</a
-        >.
-      </p>
+
+  <div class="intro-section">
+    <div class="graphContainer">
+      <img class="intro_photo" src="./intro.png" alt="Graph introduction" />
+      <div class="intro">
+        <p>
+          Upload eight protein coding regions (HA, NA, NP, PA, PB1, PB2, M1 and
+          NS1) or eight nucleotide segments (HA, NA, NP, PA, PB1, PB2, MP and
+          NS) to assess the risk of sustained transmission in mammals for avian
+          or recently zoonotic influenza A viruses. Details in
+          <a href="https://github.com/id-bioinfo/IAV_GCContent" target="_blank"
+            >https://github.com/id-bioinfo/IAV_GCContent</a
+          >.
+        </p>
+      </div>
     </div>
   </div>
 
@@ -275,11 +278,12 @@
       <input type="radio" bind:group={runtype} name="runtype" value="CDS" />
       Protein coding region (recommended)
     </label>
-    <label>
+    <label class="runtypebutton">
       <input type="radio" bind:group={runtype} name="runtype" value="WGS" />
       Nucleotide segment
     </label>
   </div>
+
   <h3>Select your FASTA sequences:</h3>
   <div class="inputFileDiv">
     {#each Object.entries(inputFiles) as [inputType, _]}
@@ -300,123 +304,407 @@
       </label>
     {/each}
   </div>
-  <p>
-    <left>
-      * Sequence names of the eight protein coding regions or nucleotide
-      segments should be the same for each influenza A virus in the input files.
-    </left>
-  </p>
+
+  <div class="note">
+    <strong>Note:</strong> Sequence names of the eight protein coding regions or
+    nucleotide segments should be the same for each influenza A virus in the input
+    files.
+  </div>
+
   {#if promise === null}
     <div class="row">
-      <label class="runtypebutton">
-        <button on:click={handleSubmit}>Run</button>
-      </label>
-      <label class="runtypebutton">
-        <button on:click={handleRunDemo}>Run demo (Mink H5N1 IAVs)</button>
-      </label>
+      <button on:click={handleSubmit}>Run Analysis</button>
+      <button class="demo-button" on:click={handleRunDemo}
+        >Run Demo (Mink H5N1 IAVs)</button
+      >
     </div>
   {/if}
+
   {#await promise}
-    <p>Loading...</p>
+    <div class="loading">Processing your sequences...</div>
   {:then res}
     {#if res}
-      <button on:click={handleReset}>Reset</button>
-      <h3>SVM Prediction</h3>
-      <Table tableData={res[0]} style="blueTable" />
-      <p>
-        <b>1</b> is sustained transmission potential in mammalian hosts;
-        <b>-1</b> is predicted to sporadic infection in mammals. The prediction is
-        based on a combination of GC content and CG dinucleotide frequencies of eight
-        CDS or segments using developed SVM model.
-      </p>
-      <h3>Visualization by 2D projection</h3>
-      <div class="graphContainer">
-        <Graph data={res[1]} />
-        <img class="legend" src="./legends.jpeg" alt="Graph legends" />
+      <div class="results-section">
+        <button class="reset-button" on:click={handleReset}>Reset</button>
+
+        <h3>SVM Prediction Results</h3>
+        <Table tableData={res[0]} style="minimal" />
+        <div class="prediction-note">
+          <strong>Prediction Guide:</strong><br />
+          <strong>1</strong> indicates sustained transmission potential in
+          mammalian hosts<br />
+          <strong>-1</strong> indicates predicted sporadic infection in mammals<br
+          /><br />
+          The prediction is based on a combination of GC content and CG dinucleotide
+          frequencies of eight CDS or segments using our developed SVM model.
+        </div>
+
+        <h3>Visualization by 2D projection</h3>
+        <div class="graphContainer">
+          <Graph data={res[1]} />
+          <img class="legend" src="./legends.jpeg" alt="Graph legends" />
+        </div>
+        <div class="visualization-note">
+          <strong>Visualization Guide:</strong><br />
+          Positions of the tested IAVs (brown points) are shown on the distributions
+          of avian and sporadic mammalian IAVs (gray zones), and persistent mammalian
+          lineages (red zones), estimated by linear discriminant analysis. Hover
+          your mouse on the points to see their sequence names. The earliest sequences
+          in persistent mammalian lineages are also highlighted.
+        </div>
       </div>
-      <p>
-        Positions of the tested IAVs (brown points) are shown on the
-        distributions of avian and sporadic mammalian IAVs (gray zones), and
-        persistent mammalian lineages (red zones), estimated by linear
-        discriminant analysis. Hover your mouse on the points to see their
-        sequence names. The earliest sequences in persistent mammalian lineages
-        are also highlighted.
-      </p>
-      <!-- <button on:click|once={handleDeleteResult}>Delete result</button> -->
     {/if}
   {:catch error}
-    <button on:click={handleReset}>Reset</button>
-    <p style="white-space: pre-line">Error occured: {error}</p>
+    <div class="results-section">
+      <button class="reset-button" on:click={handleReset}>Reset</button>
+      <div class="error">
+        <strong>Error occurred:</strong><br />
+        <pre>{error}</pre>
+      </div>
+    </div>
   {/await}
 </div>
 
 <style>
+  :global(body) {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+      Ubuntu, Cantarell, sans-serif;
+    background: #f8fafc;
+    min-height: 100vh;
+    color: #334155;
+    line-height: 1.6;
+  }
+
   .main {
-    width: auto;
-    height: auto;
-    padding: 32px;
-    display: flex;
-    flex-direction: column;
-    align-items: left;
-    justify-content: left;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+  h2 {
+    font-size: 2.2rem;
+    font-weight: 600;
+    color: #1e293b;
+    text-align: center;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 1rem;
+  }
+
+  h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #475569;
+    margin: 2rem 0 1rem 0;
+    border-left: 3px solid #64748b;
+    padding-left: 1rem;
+  }
+
+  .intro-section {
+    background: #f8fafc;
+    border-radius: 8px;
+    padding: 2rem;
+    margin: 2rem 0;
+    border: 1px solid #e2e8f0;
   }
 
   div.row {
     display: flex;
     flex-direction: row;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+    margin: 1rem 0;
   }
 
   div.inputFileDiv {
-    display: flex;
-    flex-direction: column;
-    align-items: left;
-    justify-content: left;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+    padding: 1.5rem;
+    background: #f8fafc;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
   }
 
   label.inputFileLabel {
-    width: min-content;
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 8px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+    transition: border-color 0.2s ease;
+  }
+
+  label.inputFileLabel:hover {
+    border-color: #94a3b8;
   }
 
   p.inputFileLabelText {
-    width: 30px;
-    text-align: start;
-    vertical-align: middle;
+    font-weight: 600;
+    color: #64748b;
+    margin: 0;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  input[type="file"] {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    transition: border-color 0.2s ease;
+  }
+
+  input[type="file"]:focus {
+    outline: none;
+    border-color: #64748b;
+  }
+
+  input[type="radio"] {
+    transform: scale(1.1);
+    accent-color: #475569;
   }
 
   label.runtypebutton {
-    padding-left: 16px;
-    padding-right: 16px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: white;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 500;
+  }
+
+  label.runtypebutton:hover {
+    border-color: #94a3b8;
+    background: #f8fafc;
+  }
+
+  label.runtypebutton:has(input:checked) {
+    background: #475569;
+    color: white;
+    border-color: #475569;
+  }
+
+  button {
+    padding: 0.75rem 2rem;
+    background: #475569;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  button:hover {
+    background: #334155;
+  }
+
+  .demo-button {
+    background: #64748b;
+  }
+
+  .demo-button:hover {
+    background: #475569;
+  }
+
+  .reset-button {
+    background: #94a3b8;
+    margin-bottom: 1rem;
+  }
+
+  .reset-button:hover {
+    background: #64748b;
+  }
+
+  .loading {
+    text-align: center;
+    padding: 3rem;
+    font-size: 1.1rem;
+    color: #64748b;
+    font-weight: 500;
+  }
+
+  .loading::after {
+    content: "";
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #e2e8f0;
+    border-top: 2px solid #64748b;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-left: 10px;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  .error {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+    padding: 1rem;
+    border-radius: 6px;
+    margin: 1rem 0;
+  }
+
+  .results-section {
+    background: white;
+    border-radius: 8px;
+    padding: 2rem;
+    margin: 2rem 0;
+    border: 1px solid #e2e8f0;
   }
 
   div.graphContainer {
     display: flex;
-    width: 100dwv;
-    flex: 1;
+    width: 100%;
     flex-direction: row;
     flex-wrap: wrap;
-    justify-content: left;
-    align-items: left;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 2rem;
   }
 
   img.legend {
     aspect-ratio: 926/631;
     max-height: 447px;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
   }
 
   img.intro_photo {
-    float: left;
-    width: 450px;
-    height: 288px;
-    padding-left: 1px;
-    padding-right: 5px;
+    width: 100%;
+    max-width: 450px;
+    height: auto;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
   }
+
   div.intro {
-    float: right;
-    width: 400px;
-    padding-top: 80px;
+    flex: 1;
+    min-width: 300px;
+    padding: 1rem;
+  }
+
+  div.intro p {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #475569;
+    margin: 0;
+  }
+
+  div.intro a {
+    color: #475569;
+    text-decoration: underline;
+    font-weight: 500;
+  }
+
+  div.intro a:hover {
+    color: #334155;
+  }
+
+  .note {
+    background: #f0f9ff;
+    border-left: 3px solid #0ea5e9;
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 0 6px 6px 0;
+    color: #0c4a6e;
+  }
+
+  .prediction-note {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    padding: 1rem;
+    border-radius: 6px;
+    margin: 1rem 0;
+    color: #166534;
+  }
+
+  .visualization-note {
+    background: #fffbeb;
+    border: 1px solid #fed7aa;
+    padding: 1rem;
+    border-radius: 6px;
+    margin: 1rem 0;
+    color: #92400e;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .main {
+      margin: 10px;
+      padding: 20px;
+      border-radius: 8px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+    }
+
+    div.inputFileDiv {
+      grid-template-columns: 1fr;
+    }
+
+    div.row {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    div.graphContainer {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    img.intro_photo {
+      max-width: 100%;
+    }
+
+    div.intro {
+      min-width: auto;
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .main {
+      margin: 5px;
+      padding: 15px;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+    }
+
+    button {
+      width: 100%;
+      margin: 0.25rem 0;
+    }
   }
 </style>
