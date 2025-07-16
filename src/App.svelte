@@ -155,7 +155,7 @@
           let resultTextLines = resultText.split("\n");
           let transformedResultText = [];
           let gcContentResult = JSON.parse(
-            getResultResponseJson["total_gc_content"]["S"]
+            getResultResponseJson["total_gc_content"]["S"] ?? "{}"
           );
           for (let x = 0; x < resultTextLines.length; x += 2) {
             const gc_content = gcContentResult[resultTextLines[x]];
@@ -169,8 +169,9 @@
             ];
           }
           console.log(transformedResultText);
+
           let graphResultJson = JSON.parse(
-            getResultResponseJson["graph_result"]["S"]
+            getResultResponseJson["graph_result"]["S"] ?? "{}"
           );
           let graphFinalResult = [];
           for (let key in graphResultJson) {
