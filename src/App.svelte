@@ -6,7 +6,8 @@
   const fetchInterval = 2 * 1000; // get result fetch interval in milliseconds
   const maxFetch = 100; // max get result fetch until error
   const maxErrorFetch = 5; // max fetch for getting error
-  const tableColNameSeq = "Sequence Name";
+  const tableColNameSeq = "Sequence name";
+  const tableColNameGenomicGCContent = "Genomic GC content (%)";
   const tableColNamePrediction = "Prediction";
 
   let inputFiles = {
@@ -147,16 +148,22 @@
           getResultResponseJson["status"]["S"] === "finished" &&
           getResultResponseJson["graph_status"]["S"] === "finished" &&
           "result" in getResultResponseJson &&
-          "graph_result" in getResultResponseJson
+          "graph_result" in getResultResponseJson &&
+          "total_gc_content" in getResultResponseJson
         ) {
           const resultText = getResultResponseJson["result"]["S"];
           let resultTextLines = resultText.split("\n");
           let transformedResultText = [];
+          let gcContentResult = JSON.parse(
+            getResultResponseJson["total_gc_content"]["S"]
+          );
           for (let x = 0; x < resultTextLines.length; x += 2) {
+            const gc_content = gcContentResult[resultTextLines[x]];
             transformedResultText = [
               ...transformedResultText,
               {
                 [tableColNameSeq]: resultTextLines[x],
+                [tableColNameGenomicGCContent]: gc_content || 0,
                 [tableColNamePrediction]: resultTextLines[x + 1],
               },
             ];
@@ -273,21 +280,25 @@
     </label>
   </div>
   <h3>Select your FASTA sequences:</h3>
-  {#each Object.entries(inputFiles) as [inputType, _]}
-    <label>
-      {inputType === "M"
-        ? runtype === "CDS"
-          ? "M"
-          : "MP"
-        : inputType}{#if (inputType === "M" || inputType === "NS") && runtype === "CDS"}1{/if}:
-      <input
-        type="file"
-        bind:files={inputFiles[inputType]}
-        bind:this={input[inputType]}
-        disabled={isSubmitted}
-      />
-    </label>
-  {/each}
+  <div class="inputFileDiv">
+    {#each Object.entries(inputFiles) as [inputType, _]}
+      <label class="inputFileLabel">
+        <p class="inputFileLabelText">
+          {inputType === "M"
+            ? runtype === "CDS"
+              ? "M"
+              : "MP"
+            : inputType}{#if (inputType === "M" || inputType === "NS") && runtype === "CDS"}1{/if}:
+        </p>
+        <input
+          type="file"
+          bind:files={inputFiles[inputType]}
+          bind:this={input[inputType]}
+          disabled={isSubmitted}
+        />
+      </label>
+    {/each}
+  </div>
   <p>
     <left>
       * Sequence names of the eight protein coding regions or nucleotide
@@ -352,6 +363,27 @@
   div.row {
     display: flex;
     flex-direction: row;
+  }
+
+  div.inputFileDiv {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    justify-content: left;
+  }
+
+  label.inputFileLabel {
+    width: min-content;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+  }
+
+  p.inputFileLabelText {
+    width: 30px;
+    text-align: start;
+    vertical-align: middle;
   }
 
   label.runtypebutton {
