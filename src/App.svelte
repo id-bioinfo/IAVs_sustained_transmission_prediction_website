@@ -241,6 +241,10 @@
   <title
     >Risk assessment of sustained mammalian transmission of influenza A viruses</title
   >
+  <meta
+    name="description"
+    content="Explore genomic insights into avian influenza A viruses and assess the risk of mammalian transmission with our advanced SVM-based tool. Upload viral gene data for accurate pandemic threat prediction."
+  />
   <html lang="en" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
@@ -389,7 +393,7 @@
   }
 
   h2 {
-    font-size: 2.2rem;
+    font-size: 2rem;
     font-weight: 600;
     color: #1e293b;
     text-align: center;
